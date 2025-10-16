@@ -1,0 +1,50 @@
+services:
+  database:
+    image: postgres:15-alpine
+    container_name: init_db
+    environment:
+      POSTGRES_DB: init
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d init"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./back
+    container_name: init_backend
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgres://admin:password123@database:5432/init
+      - JWT_SECRET=your-super-secret-jwt-key-change-in-production
+      - PORT=3001
+    depends_on:
+      database:
+        condition: service_healthy
+    volumes:
+      - ./back:/app
+      - /app/node_modules
+
+  frontend:
+    build: ./front
+    container_name: init_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:3001
+    depends_on:
+      - backend
+    volumes:
+      - ./front:/app
+      - /app/node_modules
+
+volumes:
+  postgres_data:

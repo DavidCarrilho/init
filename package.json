@@ -1,0 +1,22 @@
+{
+  "name": "init",
+  "version": "1.0.0",
+  "description": "Plataforma web simples com autenticação",
+  "main": "server.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd back && npm run dev",
+    "dev:frontend": "cd front && npm start",
+    "build": "cd front && npm run build",
+    "start": "cd back && npm start",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:build": "docker-compose up --build -d"
+  },
+  "keywords": ["react", "nodejs", "express", "postgresql", "authentication"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
